@@ -1,0 +1,14 @@
+$TTL	604800
+@	IN	SOA	itnsa.id. root.itnsa.id. (
+			      2		; Serial
+			 604800		; Refresh
+			  86400		; Retry
+			2419200		; Expire
+			 604800 )	; Negative Cache TTL
+;
+@	IN	NS	itnsa.id.
+@	IN	A	192.168.250.130
+www	IN	A	192.168.250.130
+www	IN	A	192.168.250.135
+srv1	IN	A	192.168.250.130
+srv2	IN	A	192.168.250.135

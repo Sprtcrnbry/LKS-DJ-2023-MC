@@ -1,0 +1,29 @@
+- name: Install App
+  hosts: app
+  tasks:
+    - name: Install Python3
+      apt:
+        name: python3
+        state: latest
+
+    - name: Create directory
+      file:
+        path: /home/competitor
+        state: directory
+
+    - name: Copy My App
+      copy:
+        src: myapp.py
+        dest: /home/competitor/myapp.py
+
+    - name: Copy systemd service
+      copy:
+        src: myapp.service
+        dest: /etc/systemd/system/myapp.service
+
+    - name: Enable and start My App service
+      systemd:
+        name: myapp.service
+        enabled: yes
+        state: started
+        daemon_reload: yes

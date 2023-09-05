@@ -1,0 +1,5 @@
+zone "itnsa.id" {
+	type slave;
+	file "/var/cache/bind/db.competitor";
+	masters { 192.168.250.130; };
+};

@@ -1,0 +1,4 @@
+- import_playbook: 01_create_users.yaml
+- import_playbook: 02_dns_server.yaml
+- import_playbook: 03_app_server.yaml
+- import_playbook: 04_web_server.yaml

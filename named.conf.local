@@ -1,0 +1,6 @@
+zone "itnsa.id" {
+	type master;
+	file "/etc/bind/db.competitor";
+	allow-transfer { 192.168.250.135; };
+	also-notify { 192.168.250.135; };
+};

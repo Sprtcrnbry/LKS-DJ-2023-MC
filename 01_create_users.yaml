@@ -1,0 +1,11 @@
+- name: Create 1000 users
+  hosts: srv
+  tasks:
+    - name: Create user
+      user:
+        name: "user{{ '%04d' | format (item) }}"
+        password: "{{ 'P@ssw0rd' | password_hash('sha512') }}"
+        home: "/home/user{{ '%04d' | format(item) }}" 
+      loop: "{{ range(0, 1000) }}"
+      async: 60
+      poll: 0

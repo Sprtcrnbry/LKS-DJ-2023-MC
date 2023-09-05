@@ -1,0 +1,41 @@
+- name: Install Web Server
+  hosts: web
+  vars:
+    package: "{{ hostvars[inventory_hostname]['package'] }}"
+  tasks:
+    - name: Install Web Server
+      apt:
+        name: "{{package}}"
+        state: latest
+
+    - name: Copy nginx config
+      copy: src=default-nginx dest=/etc/nginx/sites-available/default
+      when: "{{package=='nginx'}}"
+
+    - name: Copy apache config
+      copy: src=000-default.conf dest=/etc/apache2/sites-available/000-default.conf
+      when: "{{package=='apache2'}}"
+
+    - name: Enable apache module proxy
+      command:
+        cmd: a2enmod proxy
+        creates: /etc/apache2/mods-enabled/proxy.load
+      when: "{{package=='apache2'}}"
+
+    - name: Enable apache module proxy_http
+      command: 
+        cmd: a2enmod proxy_http
+        creates: /etc/apache2/mods-enabled/proxy_http.load
+      when: "{{package=='apache2'}}"
+
+    - name: Restart nginx service
+      service:
+        name: nginx
+        state: restarted
+      when: "{{package=='nginx'}}"
+
+    - name: Restart apache service
+      service:
+        name: apache2
+        state: restarted
+      when: "{{package=='apache2'}}"
