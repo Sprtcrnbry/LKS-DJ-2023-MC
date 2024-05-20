@@ -1,38 +1,35 @@
 # /home/competitor/get_interfaces_via_restconf.py
 import requests
 import sys
+import json
 from urllib3.exceptions import InsecureRequestWarning
 
 requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
 
-if len(sys.argv) != 3:
-   print(f"Usage: {sys.argv[0]} <router_ip> <hostname>")
+if len(sys.argv) != 2:
+   print(f"Usage: {sys.argv[0]} <router_ip>")
    sys.exit(1)
 
 router_ip = sys.argv[1]
-hostname = sys.argv[2]
 
 headers = {
    "Accept": "application/yang-data+json",
    "Content-type": "application/yang-data+json"
 }
 
-# Adjusted URL and payload based on example documentation
-url = f"https://{router_ip}/restconf/data/Cisco-IOS-XE-native:native/hostname"
+url = f"https://{router_ip}/restconf/data/ietf-interfaces:interfaces"
 
-payload = {
-    "Cisco-IOS-XE-native:hostname": hostname
-}
+response = requests.get(url, headers=headers, verify=False, auth=("admin", "admin"))
 
-print(f"Request URL: {url}")
-print(f"Payload: {payload}")
-
-response = requests.put(url, headers=headers, json=payload, verify=False, auth=("admin", "admin"))
-
-print(f"Response Code: {response.status_code}")
-print(f"Response Text: {response.text}")
-
-if response.status_code == 204:
-   print(f"Hostname updated to '{hostname}' on router {router_ip}")
+if response.status_code == 200:
+   interfaces = response.json().get('ietf-interfaces:interfaces', {}).get('interface', [])
+   formatted_interfaces = {
+       "interfaces": [
+           {iface['name']: iface['ietf-ip:ipv4']['address'][0]['ip']}
+           for iface in interfaces
+           if 'ietf-ip:ipv4' in iface and 'address' in iface['ietf-ip:ipv4']
+       ]
+   }
+   print(json.dumps(formatted_interfaces, indent=4))
 else:
    print(f"Error: {response.status_code} - {response.text}")
